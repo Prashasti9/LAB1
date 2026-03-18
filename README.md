@@ -158,5 +158,5 @@ python -m unittest test_checkmygrade -v
 
 ## Author
 
-Prashasti Srivastava (020100405) — DATA 200, San Jose State University
+Prashasti Srivastava (020100405) - DATA 200, San Jose State University
 GitHub: https://github.com/Prashasti9/LAB1
