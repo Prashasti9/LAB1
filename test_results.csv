@@ -1,108 +1,456 @@
 Test Class,Test Name,Status,Time (ms),Output / Notes
-TestAdmin,test_add_remove_user,PASS,1.3199,"User new@test.edu registered as student.
+TestAdmin,test_add_remove_user,PASS,1.2271,"User new@test.edu registered as student.
   User new@test.edu deleted."
-TestAdmin,test_admin_is_loginuser,PASS,0.1604,
-TestAdmin,test_cannot_delete_own_account,PASS,4.3699,Cannot delete your own account.
-TestAdmin,test_reset_password,PASS,2.6917,Password reset for rst@test.edu.
-TestAdmin,test_student_cannot_use_admin,PASS,0.1860,Access denied. Required: admin. Your role: student.
-TestAdminExtra,test_add_professor_role,PASS,3.9361,User newp@test.edu registered as professor.
-TestAdminExtra,test_invalid_role_rejected,PASS,0.2484,Invalid role.
-TestAdminExtra,test_list_users,PASS,2.5190,"User ID                        Role
+TestAdmin,test_admin_is_loginuser,PASS,0.2596,
+TestAdmin,test_cannot_delete_own_account,PASS,16.6629,Cannot delete your own account.
+TestAdmin,test_reset_password,PASS,10.5391,Password reset for rst@test.edu.
+TestAdmin,test_student_cannot_use_admin,PASS,0.1671,Access denied. Required: admin. Your role: student.
+TestAdminExtra,test_add_professor_role,PASS,13.2323,User newp@test.edu registered as professor.
+TestAdminExtra,test_invalid_role_rejected,PASS,0.1809,Invalid role.
+TestAdminExtra,test_list_users,PASS,20.1388,"User ID                        Role
   ---------------------------------------------
   u@test.edu                     student"
-TestAdminExtra,test_student_cannot_add_admin,PASS,0.1333,Only admin can create admin/professor accounts.
-TestCourse,test_add_course,PASS,0.8634,Course DATA200 added.
-TestCourse,test_delete_course,PASS,4.9925,"Course CS101 added.
+TestAdminExtra,test_student_cannot_add_admin,PASS,0.2849,Only admin can create admin/professor accounts.
+TestCourse,test_add_course,PASS,1.6050,Course DATA200 added.
+TestCourse,test_delete_course,PASS,5.7137,"Course CS101 added.
   Course CS101 deleted.
   All related records synced."
-TestCourse,test_duplicate_rejected,PASS,2.6992,"Course DATA200 added.
+TestCourse,test_duplicate_rejected,PASS,2.7564,"Course DATA200 added.
   Course DATA200 already exists."
-TestCourse,test_modify_course,PASS,3.5952,"Course DATA220 added.
+TestCourse,test_modify_course,PASS,18.5485,"Course DATA220 added.
   Updated Course_name for DATA220."
-TestCourse,test_student_cannot_add,PASS,0.1373,Access denied. Required: admin. Your role: student.
-TestCourseExtra,test_delete_course_removes_students,PASS,18.4041,"Student ds@test.edu enrolled in DATA200.
+TestCourse,test_student_cannot_add,PASS,0.2899,Access denied. Required: admin. Your role: student.
+TestCourseExtra,test_delete_course_removes_students,PASS,50.1496,"Student ds@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for ds@test.edu (password: Student123!)
   Course DATA200 added.
   Course DATA200 deleted.
   All related records synced."
-TestCourseExtra,test_delete_course_unassigns_professor,PASS,10.0046,"Course DATA200 added.
+TestCourseExtra,test_delete_course_unassigns_professor,PASS,28.0419,"Course DATA200 added.
   Course DATA200 deleted.
   All related records synced."
-TestCourseExtra,test_delete_nonexistent_course,PASS,0.1419,Course NOEXIST not found.
-TestCourseExtra,test_modify_credits,PASS,3.3064,"Course DATA226 added.
+TestCourseExtra,test_delete_nonexistent_course,PASS,0.1508,Course NOEXIST not found.
+TestCourseExtra,test_modify_credits,PASS,13.6247,"Course DATA226 added.
   Updated Credits for DATA226."
-TestCourseExtra,test_professor_cannot_delete_course,PASS,2.0680,"Course DATA200 added.
+TestCourseExtra,test_professor_cannot_delete_course,PASS,19.8285,"Course DATA200 added.
   Access denied. Required: admin. Your role: professor."
-TestLoginUser,test_change_password,PASS,4.2323,"Password changed.
+TestCourseFull,test_add_modify_delete_course_and_permissions,PASS,135.3035,"Course BIO1 added.
+  Course BIO1 already exists.
+  Error: ID and name required.
+  Updated Course_name for BIO1.
+  Course NOPE not found.
+  Course CS101 deleted.
+  All related records synced.
+  Course NOPE not found.
+  Access denied. Required: admin. Your role: student.
+  Access denied. Required: admin. Your role: student.
+  Access denied. Required: admin. Your role: student."
+TestCourseFull,test_display_courses_professor_filter_student_and_empty,PASS,23.9688,
+TestCourseFull,test_save_and_display_courses,PASS,25.4945,
+TestCsvHelpers,test_read_csv_bad_file_returns_empty,PASS,5.0260,
+TestCsvHelpers,test_read_csv_missing_file_returns_empty,PASS,2.4683,
+TestCsvHelpers,test_write_csv_writes_rows,PASS,20.7146,
+TestLoginAdminReportStartup,test_admin_list_add_remove_reset,PASS,9.9029,"User fresh@mycsu.edu registered as student.
+  Password reset for fresh@mycsu.edu.
+  User ghost@mycsu.edu not found.
+  User fresh@mycsu.edu deleted.
+  User ghost@mycsu.edu not found.
+  Cannot delete your own account.
+  Access denied. Required: admin. Your role: student.
+  Access denied. Required: admin. Your role: student."
+TestLoginAdminReportStartup,test_loginuser_find_login_logout_change_password_register,PASS,10.0482,"Login successful. Welcome admin@mycsu.edu! Role: admin
+  Invalid credentials.
+  Error: Fields required.
+  admin@mycsu.edu logged out.
+  Password changed.
+  Old password incorrect.
+  Access denied.
+  sam@mycsu.edu logged out.
+  User newstudent@mycsu.edu registered as student.
+  User newstudent@mycsu.edu already exists.
+  Invalid role.
+  Only admin can create admin/professor accounts.
+  User newprof@sjsu.edu registered as professor.
+  User otheradmin@mycsu.edu registered as admin."
+TestLoginAdminReportStartup,test_report_generator_by_course_professor_student,PASS,19.1967,
+TestLoginAdminReportStartup,test_startup_sync_creates_missing_accounts,PASS,41.2668,Startup sync: 4 missing login account(s) auto-created.
+TestLoginUser,test_change_password,PASS,37.1034,"Password changed.
   Login successful. Welcome u4@test.edu! Role: student"
-TestLoginUser,test_encrypt_decrypt,PASS,0.1454,
-TestLoginUser,test_login_success,PASS,4.5601,Login successful. Welcome u@test.edu! Role: student
-TestLoginUser,test_password_encrypted_in_file,PASS,3.7317,
-TestLoginUser,test_wrong_password,PASS,2.9958,Invalid credentials.
-TestProfessor,test_add_professor,PASS,2.1470,"Professor prof@test.edu added.
+TestLoginUser,test_encrypt_decrypt,PASS,0.5335,
+TestLoginUser,test_login_success,PASS,23.9439,Login successful. Welcome u@test.edu! Role: student
+TestLoginUser,test_password_encrypted_in_file,PASS,21.6423,
+TestLoginUser,test_wrong_password,PASS,19.2310,Invalid credentials.
+TestMenus,test_course_professor_report_user_menus,PASS,8.9801,"-- Courses --
+  1. Display
+  2. Add  3. Delete  4. Modify
+  0. Back
+
+  -- Courses --
+  1. Display
+  2. Add  3. Delete  4. Modify
+  0. Back
+
+  -- Courses --
+  1. Display
+  2. Add  3. Delete  4. Modify
+  0. Back
+
+  -- Courses --
+  1. Display
+  2. Add  3. Delete  4. Modify
+  0. Back
+
+  -- Courses --
+  1. Display
+  2. Add  3. Delete  4. Modify
+  0. Back
+
+  -- Professors --
+  1. Display
+  2. Add  3. Delete  4. Modify  5. Course by Professor
+  0. Back
+
+  -- Professors --
+  1. Display
+  2. Add  3. Delete  4. Modify  5. Course by Professor
+  0. Back
+
+  -- Professors --
+  1. Display
+  2. Add  3. Delete  4. Modify  5. Course by Professor
+  0. Back
+
+  -- Professors --
+  1. Display
+  2. Add  3. Delete  4. Modify  5. Course by Professor
+  0. Back
+
+  -- Professors --
+  1. Display
+  2. Add  3. Delete  4. Modify  5. Course by Professor
+  0. Back
+
+  -- Professors --
+  1. Display
+  2. Add  3. Delete  4. Modify  5. Course by Professor
+  0. Back
+
+  -- Reports --
+  1. By Course  2. By Professor  3. By Student
+  0. Back
+
+  -- Reports --
+  1. By Course  2. By Professor  3. By Student
+  0. Back
+
+  -- Reports --
+  1. By Course  2. By Professor  3. By Student
+  0. Back
+
+  -- Reports --
+  1. By Course  2. By Professor  3. By Student
+  0. Back
+
+  -- User Management [admin] --
+  1. List users  2. Add user  3. Delete user  4. Reset password
+  0. Back
+
+  -- User Management [admin] --
+  1. List users  2. Add user  3. Delete user  4. Reset password
+  0. Back
+
+  -- User Management [admin] --
+  1. List users  2. Add user  3. Delete user  4. Reset password
+  0. Back
+
+  -- User Management [admin] --
+  1. List users  2. Add user  3. Delete user  4. Reset password
+  0. Back
+
+  -- User Management [admin] --
+  1. List users  2. Add user  3. Delete user  4. Reset password
+  0. Back"
+TestMenus,test_main_menu_not_logged_in_paths_and_logged_in_paths,PASS,11.6275,"=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   Not logged in
+=============================================
+  1. Login
+  2. Register as student
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   Not logged in
+=============================================
+  1. Login
+  2. Register as student
+  0. Exit
+  Goodbye!
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   Not logged in
+=============================================
+  1. Login
+  2. Register as student
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   Not logged in
+=============================================
+  1. Login
+  2. Register as student
+  0. Exit
+  Goodbye!
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   admin@mycsu.edu  [admin]
+=============================================
+  1. Student Records
+  2. Course Management
+  3. Professor Management
+  4. Reports
+  5. User Management  [admin]
+  6. Change Password
+  7. Logout
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   admin@mycsu.edu  [admin]
+=============================================
+  1. Student Records
+  2. Course Management
+  3. Professor Management
+  4. Reports
+  5. User Management  [admin]
+  6. Change Password
+  7. Logout
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   admin@mycsu.edu  [admin]
+=============================================
+  1. Student Records
+  2. Course Management
+  3. Professor Management
+  4. Reports
+  5. User Management  [admin]
+  6. Change Password
+  7. Logout
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   admin@mycsu.edu  [admin]
+=============================================
+  1. Student Records
+  2. Course Management
+  3. Professor Management
+  4. Reports
+  5. User Management  [admin]
+  6. Change Password
+  7. Logout
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   admin@mycsu.edu  [admin]
+=============================================
+  1. Student Records
+  2. Course Management
+  3. Professor Management
+  4. Reports
+  5. User Management  [admin]
+  6. Change Password
+  7. Logout
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   admin@mycsu.edu  [admin]
+=============================================
+  1. Student Records
+  2. Course Management
+  3. Professor Management
+  4. Reports
+  5. User Management  [admin]
+  6. Change Password
+  7. Logout
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   admin@mycsu.edu  [admin]
+=============================================
+  1. Student Records
+  2. Course Management
+  3. Professor Management
+  4. Reports
+  5. User Management  [admin]
+  6. Change Password
+  7. Logout
+  0. Exit
+
+=============================================
+   CheckMyGrade  |  DATA 200  |  SJSU
+   admin@mycsu.edu  [admin]
+=============================================
+  1. Student Records
+  2. Course Management
+  3. Professor Management
+  4. Reports
+  5. User Management  [admin]
+  6. Change Password
+  7. Logout
+  0. Exit
+  Goodbye!"
+TestMenus,test_report_menu_student_role_uses_session_user,PASS,4.4259,"-- Reports --
+  3. My Grade Report
+  0. Back
+
+  -- Reports --
+  3. My Grade Report
+  0. Back"
+TestMenus,test_student_menu_routes_all_options,PASS,6.7176,"-- Student Records --
+  1. Display  2. Add  3. Delete  4. Update
+  5. Search  6. Sort  8. Course Stats
+  0. Back
+
+  -- Student Records --
+  1. Display  2. Add  3. Delete  4. Update
+  5. Search  6. Sort  8. Course Stats
+  0. Back
+
+  -- Student Records --
+  1. Display  2. Add  3. Delete  4. Update
+  5. Search  6. Sort  8. Course Stats
+  0. Back
+
+  -- Student Records --
+  1. Display  2. Add  3. Delete  4. Update
+  5. Search  6. Sort  8. Course Stats
+  0. Back
+
+  -- Student Records --
+  1. Display  2. Add  3. Delete  4. Update
+  5. Search  6. Sort  8. Course Stats
+  0. Back
+
+  -- Student Records --
+  1. Display  2. Add  3. Delete  4. Update
+  5. Search  6. Sort  8. Course Stats
+  0. Back
+  Sort by: 1.Marks  2.Email  3.Name
+  Sort time: 0.1959 ms
+
+  -- Student Records --
+  1. Display  2. Add  3. Delete  4. Update
+  5. Search  6. Sort  8. Course Stats
+  0. Back
+
+  -- Student Records --
+  1. Display  2. Add  3. Delete  4. Update
+  5. Search  6. Sort  8. Course Stats
+  0. Back"
+TestMenus,test_student_menu_student_view,PASS,5.1345,"-- Student Records --
+  9. My Grades & Marks
+  0. Back
+
+  -- Student Records --
+  9. My Grades & Marks
+  0. Back"
+TestProfessor,test_add_professor,PASS,0.3637,"Error writing C:\Users\58in\AppData\Local\Temp\tmpo9mwai0f\professors.csv: [Errno 2] No such file or directory: 'C:\\Users\\58in\\AppData\\Local\\Temp\\tmpo9mwai0f\\professors.csv'
+  Professor prof@test.edu added.
+  Error writing C:\Users\58in\AppData\Local\Temp\tmpo9mwai0f\login.csv: [Errno 2] No such file or directory: 'C:\\Users\\58in\\AppData\\Local\\Temp\\tmpo9mwai0f\\login.csv'
   Login created for prof@test.edu (password: Prof123!)"
-TestProfessor,test_delete_professor,PASS,7.5957,"Professor p2@test.edu added.
+TestProfessor,test_delete_professor,PASS,18.4880,"Professor p2@test.edu added.
   Login created for p2@test.edu (password: Prof123!)
   Professor p2@test.edu deleted.
   Login for p2@test.edu removed."
-TestProfessor,test_duplicate_rejected,PASS,3.4756,"Professor p@test.edu added.
+TestProfessor,test_duplicate_rejected,PASS,1.4061,"Professor p@test.edu added.
   Login created for p@test.edu (password: Prof123!)
   Professor p@test.edu already exists."
-TestProfessor,test_modify_professor,PASS,6.0484,"Professor p3@test.edu added.
+TestProfessor,test_modify_professor,PASS,18.0267,"Professor p3@test.edu added.
   Login created for p3@test.edu (password: Prof123!)
   Updated Rank for p3@test.edu."
-TestProfessor,test_student_cannot_add,PASS,0.1652,Access denied. Required: admin. Your role: student.
-TestProfessorExtra,test_auto_sync_login_on_add,PASS,5.8396,"Professor np@test.edu added.
+TestProfessor,test_student_cannot_add,PASS,0.1586,Access denied. Required: admin. Your role: student.
+TestProfessorExtra,test_auto_sync_login_on_add,PASS,21.3858,"Professor np@test.edu added.
   Login created for np@test.edu (password: Prof123!)"
-TestProfessorExtra,test_auto_sync_login_on_delete,PASS,7.4662,"Professor dp@test.edu added.
+TestProfessorExtra,test_auto_sync_login_on_delete,PASS,45.5756,"Professor dp@test.edu added.
   Login created for dp@test.edu (password: Prof123!)
   Professor dp@test.edu deleted.
   Login for dp@test.edu removed."
-TestProfessorExtra,test_delete_nonexistent_professor,PASS,0.2146,Professor ghost@test.edu not found.
-TestProfessorExtra,test_professor_sees_only_own_profile,PASS,8.9854,"Professor s@test.edu added.
+TestProfessorExtra,test_delete_nonexistent_professor,PASS,0.4963,Professor ghost@test.edu not found.
+TestProfessorExtra,test_professor_sees_only_own_profile,PASS,48.6972,"Professor s@test.edu added.
   Login created for s@test.edu (password: Prof123!)
   Professor m@test.edu added.
   Login created for m@test.edu (password: Prof123!)"
-TestProfessorExtra,test_show_course_by_professor,PASS,2.6049,"Professor p@test.edu added.
+TestProfessorExtra,test_show_course_by_professor,PASS,5.5547,"Professor p@test.edu added.
   Login created for p@test.edu (password: Prof123!)"
-TestSession,test_admin_is_admin,PASS,0.0535,
-TestSession,test_logout,PASS,0.0256,admin@test.edu logged out.
-TestSession,test_professor_not_admin,PASS,0.0180,
-TestSession,test_require_denied,PASS,0.0183,Access denied. Required: admin. Your role: student.
-TestSession,test_require_pass,PASS,0.0143,
-TestSession,test_student_role,PASS,0.0148,
-TestStudent,test_add_student,PASS,2.5187,"Student alice@test.edu enrolled in DATA200.
+TestProfessorFull,test_add_modify_delete_show_professor,PASS,32.8514,"Professor new@sjsu.edu added.
+  Login created for new@sjsu.edu (password: Prof123!)
+  Professor new@sjsu.edu already exists.
+  Error: ID and name required.
+  Updated Rank for new@sjsu.edu.
+  Professor ghost@sjsu.edu not found.
+  Professor new@sjsu.edu deleted.
+  Login for new@sjsu.edu removed.
+  Professor ghost@sjsu.edu not found.
+  Access denied. Required: admin. Your role: student.
+  Access denied. Required: admin. Your role: student.
+  Access denied. Required: admin. Your role: student."
+TestProfessorFull,test_professor_details_filter_and_empty,PASS,24.3028,
+TestProfessorFull,test_save_and_display_professors,PASS,32.3221,
+TestSecuritySessionNodeListGrades,test_grades_helpers_and_boundaries,PASS,10.5216,Invalid marks 'bad'.
+TestSecuritySessionNodeListGrades,test_linked_list_append_find_find_all_delete,PASS,8.7297,
+TestSecuritySessionNodeListGrades,test_node_holds_data,PASS,8.8057,
+TestSecuritySessionNodeListGrades,test_password_wrapper_roundtrip,PASS,9.8841,
+TestSecuritySessionNodeListGrades,test_session_state_and_require,PASS,12.0299,
+TestSecuritySessionNodeListGrades,test_text_security_encrypt_decrypt_roundtrip,PASS,8.2552,
+TestSession,test_admin_is_admin,PASS,0.1026,
+TestSession,test_logout,PASS,0.0533,admin@test.edu logged out.
+TestSession,test_professor_not_admin,PASS,0.0443,
+TestSession,test_require_denied,PASS,0.0430,Access denied. Required: admin. Your role: student.
+TestSession,test_require_pass,PASS,0.0352,
+TestSession,test_student_role,PASS,0.0377,
+TestStudent,test_add_student,PASS,1.2793,"Error writing C:\Users\58in\AppData\Local\Temp\tmp3ihpd67t\students.csv: [Errno 2] No such file or directory: 'C:\\Users\\58in\\AppData\\Local\\Temp\\tmp3ihpd67t\\students.csv'
+  Student alice@test.edu enrolled in DATA200.
+  Error writing C:\Users\58in\AppData\Local\Temp\tmp3ihpd67t\courses.csv: [Errno 2] No such file or directory: 'C:\\Users\\58in\\AppData\\Local\\Temp\\tmp3ihpd67t\\courses.csv'
   Course DATA200 auto-created in courses.csv.
+  Error writing C:\Users\58in\AppData\Local\Temp\tmp3ihpd67t\login.csv: [Errno 2] No such file or directory: 'C:\\Users\\58in\\AppData\\Local\\Temp\\tmp3ihpd67t\\login.csv'
   Login created for alice@test.edu (password: Student123!)"
-TestStudent,test_bulk_1000_with_search_timing,PASS,54.4804,[search] 10 searches in 1000 records: 1.5335 ms total | 0.1534 ms avg
-TestStudent,test_check_my_grades,PASS,7.4258,"Student f@test.edu enrolled in DATA200.
+TestStudent,test_bulk_1000_with_search_timing,PASS,67.5471,[search] 10 searches in 1000 records: 1.3137 ms total | 0.1314 ms avg
+TestStudent,test_check_my_grades,PASS,21.7997,"Student f@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for f@test.edu (password: Student123!)
   Grades for f@test.edu:
     DATA200      Grade: A  Marks: 92"
-TestStudent,test_delete_all_enrollments,PASS,8.2081,"Student d@test.edu enrolled in DATA200.
+TestStudent,test_delete_all_enrollments,PASS,29.7532,"Student d@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for d@test.edu (password: Student123!)
   All enrollments for d@test.edu deleted.
   Login removed for d@test.edu."
-TestStudent,test_delete_one_enrollment,PASS,13.6689,"Student c@test.edu enrolled in DATA200.
+TestStudent,test_delete_one_enrollment,PASS,48.9656,"Student c@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for c@test.edu (password: Student123!)
   Student c@test.edu enrolled in DATA220.
   Course DATA220 auto-created in courses.csv.
   Removed c@test.edu from DATA200."
-TestStudent,test_duplicate_enrollment_rejected,PASS,4.7899,"Student bob@test.edu enrolled in DATA200.
+TestStudent,test_duplicate_enrollment_rejected,PASS,6.3841,"Student bob@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for bob@test.edu (password: Student123!)
   bob@test.edu already enrolled in DATA200."
-TestStudent,test_multi_enrollment,PASS,14.7382,"Student alice@test.edu enrolled in DATA200.
+TestStudent,test_multi_enrollment,PASS,40.1624,"Student alice@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for alice@test.edu (password: Student123!)
   Student alice@test.edu enrolled in DATA220.
   Course DATA220 auto-created in courses.csv."
-TestStudent,test_professor_cannot_add,PASS,0.4249,Access denied. Required: admin. Your role: professor.
-TestStudent,test_sort_email_timed,PASS,21.6069,"Student zara@test.edu enrolled in DATA200.
+TestStudent,test_professor_cannot_add,PASS,0.4132,Access denied. Required: admin. Your role: professor.
+TestStudent,test_sort_email_timed,PASS,62.8378,"Student zara@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for zara@test.edu (password: Student123!)
   Student alice@test.edu enrolled in DATA200.
@@ -110,30 +458,30 @@ TestStudent,test_sort_email_timed,PASS,21.6069,"Student zara@test.edu enrolled i
   Student mike@test.edu enrolled in DATA200.
   Login created for mike@test.edu (password: Student123!)
 
-  [sort] email ascending: 0.0307 ms"
-TestStudent,test_sort_marks_ascending_timed,PASS,68.1936,"Student dxrgb@test.edu enrolled in DATA200.
+  [sort] email ascending: 0.0545 ms"
+TestStudent,test_sort_marks_ascending_timed,PASS,74.8952,"Student hrgyc@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
-  Login created for dxrgb@test.edu (password: Student123!)
-  Student ffnkt@test.edu enrolled in DATA200.
-  Login created for ffnkt@test.edu (password: Student123!)
-  Student bjjlj@test.edu enrolled in DATA200.
-  Login created for bjjlj@test.edu (password: Student123!)
-  Student jbwwl@test.edu enrolled in DATA200.
-  Login created for jbwwl@test.edu (password: Student123!)
+  Login created for hrgyc@test.edu (password: Student123!)
+  Student kpknp@test.edu enrolled in DATA200.
+  Login created for kpknp@test.edu (password: Student123!)
+  Student drlhk@test.edu enrolled in DATA200.
+  Login created for drlhk@test.edu (password: Student123!)
+  Student yjxjx@test.edu enrolled in DATA200.
+  Login created for yjxjx@test.edu (password: Student123!)
 
-  [sort] marks ascending: 0.0254 ms"
-TestStudent,test_sort_marks_descending_timed,PASS,67.9597,"Student nsbqw@test.edu enrolled in DATA200.
+  [sort] marks ascending: 0.0291 ms"
+TestStudent,test_sort_marks_descending_timed,PASS,72.4679,"Student mpjbx@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
-  Login created for nsbqw@test.edu (password: Student123!)
-  Student nqywk@test.edu enrolled in DATA200.
-  Login created for nqywk@test.edu (password: Student123!)
-  Student oprrb@test.edu enrolled in DATA200.
-  Login created for oprrb@test.edu (password: Student123!)
-  Student jeteq@test.edu enrolled in DATA200.
-  Login created for jeteq@test.edu (password: Student123!)
+  Login created for mpjbx@test.edu (password: Student123!)
+  Student tdtvz@test.edu enrolled in DATA200.
+  Login created for tdtvz@test.edu (password: Student123!)
+  Student xblch@test.edu enrolled in DATA200.
+  Login created for xblch@test.edu (password: Student123!)
+  Student lxtjy@test.edu enrolled in DATA200.
+  Login created for lxtjy@test.edu (password: Student123!)
 
-  [sort] marks descending: 0.0204 ms"
-TestStudent,test_sort_name_timed,PASS,13.6700,"Student zara@test.edu enrolled in DATA200.
+  [sort] marks descending: 0.0282 ms"
+TestStudent,test_sort_name_timed,PASS,20.2740,"Student zara@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for zara@test.edu (password: Student123!)
   Student alice@test.edu enrolled in DATA200.
@@ -141,79 +489,108 @@ TestStudent,test_sort_name_timed,PASS,13.6700,"Student zara@test.edu enrolled in
   Student mike@test.edu enrolled in DATA200.
   Login created for mike@test.edu (password: Student123!)
 
-  [sort] name ascending: 0.0217 ms"
-TestStudent,test_student_cannot_add,PASS,0.3212,Access denied. Required: admin. Your role: student.
-TestStudent,test_update_recalculates_grade,PASS,5.6191,"Student e@test.edu enrolled in DATA200.
+  [sort] name ascending: 0.0284 ms"
+TestStudent,test_student_cannot_add,PASS,0.5608,Access denied. Required: admin. Your role: student.
+TestStudent,test_update_recalculates_grade,PASS,5.7216,"Student e@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for e@test.edu (password: Student123!)
   Updated Marks for e@test.edu."
-TestStudentExtra,test_auto_sync_course_created_on_student_add,PASS,10.3019,"Student nc@test.edu enrolled in NEWCOURSE.
+TestStudentExtra,test_auto_sync_course_created_on_student_add,PASS,31.5476,"Student nc@test.edu enrolled in NEWCOURSE.
   Course NEWCOURSE auto-created in courses.csv.
   Login created for nc@test.edu (password: Student123!)"
-TestStudentExtra,test_auto_sync_login_created_on_student_add,PASS,9.3109,"Student nl@test.edu enrolled in DATA200.
+TestStudentExtra,test_auto_sync_login_created_on_student_add,PASS,29.1783,"Student nl@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for nl@test.edu (password: Student123!)"
-TestStudentExtra,test_auto_sync_login_kept_if_other_enrollment,PASS,22.0075,"Student ke@test.edu enrolled in DATA200.
+TestStudentExtra,test_auto_sync_login_kept_if_other_enrollment,PASS,38.8271,"Student ke@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for ke@test.edu (password: Student123!)
   Student ke@test.edu enrolled in DATA220.
   Course DATA220 auto-created in courses.csv.
   Removed ke@test.edu from DATA200."
-TestStudentExtra,test_auto_sync_login_removed_on_student_delete,PASS,21.6676,"Student rd@test.edu enrolled in DATA200.
+TestStudentExtra,test_auto_sync_login_removed_on_student_delete,PASS,32.8610,"Student rd@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for rd@test.edu (password: Student123!)
   All enrollments for rd@test.edu deleted.
   Login removed for rd@test.edu."
-TestStudentExtra,test_check_my_marks,PASS,10.4785,"Student m@test.edu enrolled in DATA200.
+TestStudentExtra,test_check_my_marks,PASS,28.7877,"Student m@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for m@test.edu (password: Student123!)
   Marks for m@test.edu:
     DATA200      Marks: 92"
-TestStudentExtra,test_course_stats_avg_median,PASS,58.3071,"Student mktgc@test.edu enrolled in DATA200.
+TestStudentExtra,test_course_stats_avg_median,PASS,66.8166,"Student mrjuc@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
-  Login created for mktgc@test.edu (password: Student123!)
-  Student hsron@test.edu enrolled in DATA200.
-  Login created for hsron@test.edu (password: Student123!)
-  Student ifgue@test.edu enrolled in DATA200.
-  Login created for ifgue@test.edu (password: Student123!)
-  Student bfdfg@test.edu enrolled in DATA200.
-  Login created for bfdfg@test.edu (password: Student123!)"
-TestStudentExtra,test_course_stats_no_records,PASS,0.4149,
-TestStudentExtra,test_display_records_professor_scoped,PASS,24.6347,"Student sc@test.edu enrolled in DATA200.
+  Login created for mrjuc@test.edu (password: Student123!)
+  Student mwojj@test.edu enrolled in DATA200.
+  Login created for mwojj@test.edu (password: Student123!)
+  Student ffifa@test.edu enrolled in DATA200.
+  Login created for ffifa@test.edu (password: Student123!)
+  Student trste@test.edu enrolled in DATA200.
+  Login created for trste@test.edu (password: Student123!)"
+TestStudentExtra,test_course_stats_no_records,PASS,0.2758,
+TestStudentExtra,test_display_records_professor_scoped,PASS,70.9503,"Student sc@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for sc@test.edu (password: Student123!)
   Student sc2@test.edu enrolled in DATA220.
   Course DATA220 auto-created in courses.csv.
   Login created for sc2@test.edu (password: Student123!)"
-TestStudentExtra,test_get_all_returns_list,PASS,11.2280,"Student g@test.edu enrolled in DATA200.
+TestStudentExtra,test_get_all_returns_list,PASS,5.3084,"Student g@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for g@test.edu (password: Student123!)"
-TestStudentExtra,test_grades_invalid_marks,PASS,0.6842,Invalid marks 'abc'.
-TestStudentExtra,test_grades_marks_to_grade_all_ranges,PASS,0.6121,
-TestStudentExtra,test_linked_list_delete_specific,PASS,18.8891,"Student dl@test.edu enrolled in DATA200.
+TestStudentExtra,test_grades_invalid_marks,PASS,0.3859,Invalid marks 'abc'.
+TestStudentExtra,test_grades_marks_to_grade_all_ranges,PASS,0.4765,
+TestStudentExtra,test_linked_list_delete_specific,PASS,30.8319,"Student dl@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for dl@test.edu (password: Student123!)
   Student dl@test.edu enrolled in DATA220.
   Course DATA220 auto-created in courses.csv."
-TestStudentExtra,test_linked_list_find_all,PASS,19.5758,"Student ll@test.edu enrolled in DATA200.
+TestStudentExtra,test_linked_list_find_all,PASS,30.0076,"Student ll@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for ll@test.edu (password: Student123!)
   Student ll@test.edu enrolled in DATA220.
   Course DATA220 auto-created in courses.csv."
-TestStudentExtra,test_search_not_found,PASS,0.5354,"Search time: 0.0020 ms
+TestStudentExtra,test_search_not_found,PASS,0.7456,"Search time: 0.0022 ms
   Not found."
-TestStudentExtra,test_search_student_timed,PASS,6.4731,"Student s@test.edu enrolled in DATA200.
+TestStudentExtra,test_search_student_timed,PASS,5.2147,"Student s@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for s@test.edu (password: Student123!)
-  Search time: 0.0055 ms
+  Search time: 0.0063 ms
   Found: {'Email_address': 's@test.edu', 'First_name': 'S', 'Last_name': 'T', 'Course_id': 'DATA200', 'Grade': 'A', 'Marks': '90'}"
-TestStudentExtra,test_student_cannot_see_others_marks,PASS,8.3095,"Student o@test.edu enrolled in DATA200.
+TestStudentExtra,test_student_cannot_see_others_marks,PASS,3.7687,"Student o@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for o@test.edu (password: Student123!)"
-TestStudentExtra,test_update_first_name,PASS,7.0187,"Student upd@test.edu enrolled in DATA200.
+TestStudentExtra,test_update_first_name,PASS,7.6831,"Student upd@test.edu enrolled in DATA200.
   Course DATA200 auto-created in courses.csv.
   Login created for upd@test.edu (password: Student123!)
   Updated First_name for upd@test.edu."
-TestStudentExtra,test_update_nonexistent_student,PASS,0.7468,Student ghost@test.edu not found.
+TestStudentExtra,test_update_nonexistent_student,PASS,0.3375,Student ghost@test.edu not found.
+TestStudentFull,test_add_new_student_and_validations,PASS,40.3287,"Student new@mycsu.edu enrolled in DATA300.
+  Course DATA300 auto-created in courses.csv.
+  Login created for new@mycsu.edu (password: Student123!)
+  new@mycsu.edu already enrolled in DATA300.
+  Error: All fields required.
+  Error: Marks must be numeric.
+  Access denied. Required: admin. Your role: student."
+TestStudentFull,test_check_my_grades_and_marks_access,PASS,11.6263,
+TestStudentFull,test_delete_new_student_specific_and_all_and_not_found,PASS,36.4600,"Removed sam@mycsu.edu from CS101.
+  All enrollments for alex@mycsu.edu deleted.
+  Student ghost@mycsu.edu not found.
+  Error: Email required.
+  Access denied. Required: admin. Your role: student."
+TestStudentFull,test_display_records_admin_and_professor_filter,PASS,13.1702,
+TestStudentFull,test_display_records_denied_or_empty,PASS,17.5414,
+TestStudentFull,test_load_and_save,PASS,36.1328,
+TestStudentFull,test_search_sort_stats_and_get_all,PASS,17.2823,"Search time: 0.0093 ms
+  Found: {'Email_address': 'alex@mycsu.edu', 'First_name': 'Alex', 'Last_name': 'Stone', 'Course_id': 'DATA200', 'Grade': 'C', 'Marks': '74'}
+  Search time: 0.0041 ms
+  Not found.
+  Access denied. Required: admin, professor. Your role: student."
+TestStudentFull,test_sync_course_add_and_no_duplicate,PASS,37.4957,Course NEW123 auto-created in courses.csv.
+TestStudentFull,test_sync_login_add_and_no_duplicate,PASS,33.1027,Login created for alex2@mycsu.edu (password: Student123!)
+TestStudentFull,test_sync_login_remove_only_when_no_enrollments_left,PASS,31.8040,"All enrollments for sam@mycsu.edu deleted.
+  Login removed for sam@mycsu.edu."
+TestStudentFull,test_update_student_record_and_marks_regrade,PASS,29.7703,"Updated Marks for alex@mycsu.edu.
+  Error: Marks must be numeric.
+  Student ghost@mycsu.edu not found.
+  Access denied. Required: admin. Your role: student."
 ,,,,
-SUMMARY,Total: 72,Passed: 72  Failed: 0,655.4515,All tests completed
+SUMMARY,Total: 107,Passed: 107  Failed: 0,2118.3234,All tests completed
