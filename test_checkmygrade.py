@@ -1,7 +1,5 @@
 """
 Unit Tests - CheckMyGrade Application
-DATA 200 - Lab 1
-Professor: Paramdeep Saini, SJSU
 
 We use Python's built-in unittest framework to test every major feature of
 the application. Each test class focuses on one entity (Student, Course, etc.)
@@ -13,6 +11,11 @@ those files around each individual test.
 """
 
 import unittest
+import csv
+import io
+import sys
+import tempfile
+from unittest.mock import MagicMock, patch
 import os
 import time
 import random
@@ -26,6 +29,12 @@ app.STUDENTS_FILE   = "test_students.csv"
 app.COURSES_FILE    = "test_courses.csv"
 app.PROFESSORS_FILE = "test_professors.csv"
 app.LOGIN_FILE      = "test_login.csv"
+
+# Constants so Suite 1 setUp methods can reset paths after Suite 2 changes them
+_ORIG_STUDENTS   = "test_students.csv"
+_ORIG_COURSES    = "test_courses.csv"
+_ORIG_PROFESSORS = "test_professors.csv"
+_ORIG_LOGIN      = "test_login.csv"
 
 
 def cleanup():
@@ -105,6 +114,10 @@ class TestStudent(unittest.TestCase):
         self.s = app.Student()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -279,6 +292,10 @@ class TestCourse(unittest.TestCase):
         self.c = app.Course()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -326,6 +343,10 @@ class TestProfessor(unittest.TestCase):
         self.p = app.Professor()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -370,10 +391,18 @@ class TestLoginUser(unittest.TestCase):
 
     def setUp(self):
         cleanup()
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         logout()
         self.lu = app.LoginUser()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -433,6 +462,10 @@ class TestAdmin(unittest.TestCase):
         self.admin = app.Admin()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -488,6 +521,10 @@ class TestStudentExtra(unittest.TestCase):
         self.s = app.Student()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -653,6 +690,10 @@ class TestCourseExtra(unittest.TestCase):
         self.c = app.Course()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -710,6 +751,10 @@ class TestProfessorExtra(unittest.TestCase):
         self.p = app.Professor()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -768,6 +813,10 @@ class TestAdminExtra(unittest.TestCase):
         self.admin = app.Admin()
 
     def tearDown(self):
+        app.STUDENTS_FILE   = _ORIG_STUDENTS
+        app.COURSES_FILE    = _ORIG_COURSES
+        app.PROFESSORS_FILE = _ORIG_PROFESSORS
+        app.LOGIN_FILE      = _ORIG_LOGIN
         cleanup()
         logout()
 
@@ -801,5 +850,604 @@ class TestAdminExtra(unittest.TestCase):
         self.assertFalse(r)
 
 
-if __name__ == "__main__":
+import tempfile
+from unittest.mock import MagicMock, patch
+
+
+##############################################################################
+# SUITE 2 — Extended tests (BaseTestCase with seeded CSV data)
+# ===========================================================================
+
+def seed_csv(path, fieldnames, rows):
+    with open(path, 'w', newline='') as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        w.writerows(rows)
+
+
+class BaseTestCase(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        app.STUDENTS_FILE = os.path.join(self.tmp.name, 'students.csv')
+        app.COURSES_FILE = os.path.join(self.tmp.name, 'courses.csv')
+        app.PROFESSORS_FILE = os.path.join(self.tmp.name, 'professors.csv')
+        app.LOGIN_FILE = os.path.join(self.tmp.name, 'login.csv')
+
+        seed_csv(app.STUDENTS_FILE, app.Student.FIELDS, [
+            {
+                'Email_address': 'sam@mycsu.edu',
+                'First_name': 'Sam',
+                'Last_name': 'Carpenter',
+                'Course_id': 'DATA200',
+                'Grade': 'A',
+                'Marks': '91',
+            },
+            {
+                'Email_address': 'sam@mycsu.edu',
+                'First_name': 'Sam',
+                'Last_name': 'Carpenter',
+                'Course_id': 'CS101',
+                'Grade': 'B',
+                'Marks': '84',
+            },
+            {
+                'Email_address': 'alex@mycsu.edu',
+                'First_name': 'Alex',
+                'Last_name': 'Stone',
+                'Course_id': 'DATA200',
+                'Grade': 'C',
+                'Marks': '74',
+            },
+        ])
+        seed_csv(app.COURSES_FILE, app.Course.FIELDS, [
+            {'Course_id': 'DATA200', 'Course_name': 'Data Programming', 'Credits': '3', 'Description': 'Core lab'},
+            {'Course_id': 'CS101', 'Course_name': 'Intro CS', 'Credits': '4', 'Description': 'Basics'},
+        ])
+        seed_csv(app.PROFESSORS_FILE, app.Professor.FIELDS, [
+            {'Professor_id': 'saini@sjsu.edu', 'Professor_name': 'Prof Saini', 'Rank': 'Senior Professor', 'Course_id': 'DATA200'},
+            {'Professor_id': 'masum@sjsu.edu', 'Professor_name': 'Prof Masum', 'Rank': 'Professor', 'Course_id': 'CS101'},
+        ])
+        seed_csv(app.LOGIN_FILE, app.LoginUser.FIELDS, [
+            {'User_id': 'admin@mycsu.edu', 'Password': app.encrypt_password('Admin123!'), 'Role': 'admin'},
+            {'User_id': 'saini@sjsu.edu', 'Password': app.encrypt_password('Prof123!'), 'Role': 'professor'},
+            {'User_id': 'masum@sjsu.edu', 'Password': app.encrypt_password('Prof123!'), 'Role': 'professor'},
+            {'User_id': 'sam@mycsu.edu', 'Password': app.encrypt_password('Student123!'), 'Role': 'student'},
+        ])
+        app.session.user_id = None
+        app.session.role = None
+
+    def login_as(self, role):
+        mapping = {
+            'admin': ('admin@mycsu.edu', 'admin'),
+            'professor': ('saini@sjsu.edu', 'professor'),
+            'student': ('sam@mycsu.edu', 'student'),
+        }
+        uid, r = mapping[role]
+        app.session.login(uid, r)
+
+
+class TestCsvHelpers(BaseTestCase):
+    def test_read_csv_missing_file_returns_empty(self):
+        self.assertEqual(app.read_csv(os.path.join(self.tmp.name, 'missing.csv')), [])
+
+    def test_read_csv_bad_file_returns_empty(self):
+        bad = os.path.join(self.tmp.name, 'bad.csv')
+        with open(bad, 'w', encoding='utf-8') as f:
+            f.write('\x00\x00')
+        result = app.read_csv(bad)
+        self.assertIsInstance(result, list)
+
+    def test_write_csv_writes_rows(self):
+        path = os.path.join(self.tmp.name, 'out.csv')
+        rows = [{'a': '1', 'b': '2'}]
+        app.write_csv(path, rows, ['a', 'b'])
+        with open(path, newline='') as f:
+            read_back = list(csv.DictReader(f))
+        self.assertEqual(read_back, rows)
+
+
+class TestSecuritySessionNodeListGrades(BaseTestCase):
+    def test_text_security_encrypt_decrypt_roundtrip(self):
+        sec = app.TextSecurity(13)
+        enc = sec.encrypt('Welcome12#_')
+        self.assertNotEqual(enc, 'Welcome12#_')
+        self.assertEqual(sec.decrypt(enc), 'Welcome12#_')
+
+    def test_password_wrapper_roundtrip(self):
+        enc = app.encrypt_password('Pass123!')
+        self.assertEqual(app.decrypt_password(enc), 'Pass123!')
+
+    def test_session_state_and_require(self):
+        s = app.Session()
+        self.assertFalse(s.is_logged_in())
+        s.login('user@test.edu', 'admin')
+        self.assertTrue(s.is_logged_in())
+        self.assertTrue(s.is_admin())
+        self.assertTrue(s.is_professor())
+        self.assertFalse(s.is_student())
+        self.assertTrue(s.require('admin'))
+        with patch('builtins.print') as p:
+            self.assertFalse(s.require('student'))
+            p.assert_called()
+        with patch('builtins.print'):
+            s.logout()
+        self.assertFalse(s.is_logged_in())
+
+    def test_node_holds_data(self):
+        n = app.Node({'x': 1})
+        self.assertEqual(n.data, {'x': 1})
+        self.assertIsNone(n.next)
+
+    def test_linked_list_append_find_find_all_delete(self):
+        ll = app.LinkedList()
+        self.assertFalse(ll.delete('nobody@test.edu'))
+        ll.append({'Email_address': 'a@test.edu', 'Course_id': 'C1'})
+        ll.append({'Email_address': 'a@test.edu', 'Course_id': 'C2'})
+        ll.append({'Email_address': 'b@test.edu', 'Course_id': 'C3'})
+        self.assertEqual(len(ll.to_list()), 3)
+        self.assertEqual(ll.find('a@test.edu')['Course_id'], 'C1')
+        self.assertEqual(ll.find('a@test.edu', 'C2')['Course_id'], 'C2')
+        self.assertIsNone(ll.find('x@test.edu'))
+        self.assertEqual(len(ll.find_all('a@test.edu')), 2)
+        self.assertTrue(ll.delete('a@test.edu', 'C1'))
+        self.assertTrue(ll.delete('b@test.edu'))
+        self.assertFalse(ll.delete('b@test.edu'))
+
+    def test_grades_helpers_and_boundaries(self):
+        self.assertEqual(app.Grades.marks_to_grade('90'), 'A')
+        self.assertEqual(app.Grades.marks_to_grade('89'), 'B')
+        self.assertEqual(app.Grades.marks_to_grade('79'), 'C')
+        self.assertEqual(app.Grades.marks_to_grade('69'), 'D')
+        self.assertEqual(app.Grades.marks_to_grade('59'), 'F')
+        self.assertEqual(app.Grades.marks_to_grade('bad'), 'F')
+        g = app.Grades.add_grade('g1', 'A', '90-100')
+        with patch('builtins.print') as p:
+            g.display_grade_report()
+            p.assert_called()
+        grades = [g, app.Grades('g2', 'B', '80-89')]
+        grades = app.Grades.modify_grade(grades, 'g2', 'A', '90-100')
+        self.assertEqual(grades[1].grade, 'A')
+        grades = app.Grades.delete_grade(grades, 'g1')
+        self.assertEqual([x.grade_id for x in grades], ['g2'])
+
+
+class TestStudentFull(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as('admin')
+        self.student = app.Student()
+
+    def test_load_and_save(self):
+        self.assertEqual(len(self.student.get_all()), 3)
+        self.student._ll.append({
+            'Email_address': 'new@mycsu.edu', 'First_name': 'New', 'Last_name': 'User',
+            'Course_id': 'CS101', 'Grade': 'A', 'Marks': '95'
+        })
+        self.student._save()
+        fresh = app.Student()
+        self.assertEqual(len(fresh.get_all()), 4)
+
+    def test_sync_login_add_and_no_duplicate(self):
+        self.student._sync_login_add('alex2@mycsu.edu')
+        rows = app.read_csv(app.LOGIN_FILE)
+        self.assertTrue(any(r['User_id'] == 'alex2@mycsu.edu' for r in rows))
+        count = len(rows)
+        self.student._sync_login_add('alex2@mycsu.edu')
+        self.assertEqual(len(app.read_csv(app.LOGIN_FILE)), count)
+
+    def test_sync_login_remove_only_when_no_enrollments_left(self):
+        self.student._sync_login_add('sam@mycsu.edu')
+        self.student._sync_login_remove('sam@mycsu.edu')
+        self.assertTrue(any(r['User_id'] == 'sam@mycsu.edu' for r in app.read_csv(app.LOGIN_FILE)))
+        self.student.delete_new_student('sam@mycsu.edu')
+        self.assertFalse(any(r['User_id'] == 'sam@mycsu.edu' for r in app.read_csv(app.LOGIN_FILE)))
+
+    def test_sync_course_add_and_no_duplicate(self):
+        self.student._sync_course_add('NEW123')
+        courses = app.read_csv(app.COURSES_FILE)
+        self.assertTrue(any(r['Course_id'] == 'NEW123' for r in courses))
+        count = len(courses)
+        self.student._sync_course_add('NEW123')
+        self.assertEqual(len(app.read_csv(app.COURSES_FILE)), count)
+
+    def test_display_records_admin_and_professor_filter(self):
+        with patch('builtins.print') as p:
+            self.student.display_records()
+            self.assertTrue(p.called)
+        self.login_as('professor')
+        prof_student = app.Student()
+        with patch('builtins.print') as p:
+            prof_student.display_records()
+            printed = ' '.join(' '.join(map(str, c.args)) for c in p.call_args_list)
+        self.assertIn('DATA200', printed)
+        self.assertNotIn('CS101', printed)
+
+    def test_display_records_denied_or_empty(self):
+        self.login_as('student')
+        with patch('builtins.print') as p:
+            app.Student().display_records()
+            self.assertTrue(any('Access denied' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        self.login_as('admin')
+        seed_csv(app.STUDENTS_FILE, app.Student.FIELDS, [])
+        with patch('builtins.print') as p:
+            app.Student().display_records()
+            self.assertTrue(any('No records found' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+
+    def test_add_new_student_and_validations(self):
+        self.assertTrue(self.student.add_new_student('new@mycsu.edu', 'New', 'User', 'DATA300', 'A', '96'))
+        self.assertFalse(self.student.add_new_student('new@mycsu.edu', 'New', 'User', 'DATA300', 'A', '96'))
+        self.assertFalse(self.student.add_new_student('', 'New', 'User', 'DATA300', 'A', '96'))
+        self.assertFalse(self.student.add_new_student('bad@mycsu.edu', 'Bad', 'User', 'DATA300', 'A', 'xx'))
+        self.login_as('student')
+        self.assertFalse(app.Student().add_new_student('x@y.com', 'X', 'Y', 'C1', 'A', '90'))
+
+    def test_delete_new_student_specific_and_all_and_not_found(self):
+        self.assertTrue(self.student.delete_new_student('sam@mycsu.edu', 'CS101'))
+        self.assertIsNone(self.student._ll.find('sam@mycsu.edu', 'CS101'))
+        self.assertTrue(self.student.delete_new_student('alex@mycsu.edu'))
+        self.assertFalse(self.student.delete_new_student('ghost@mycsu.edu'))
+        self.assertFalse(self.student.delete_new_student(''))
+        self.login_as('student')
+        self.assertFalse(app.Student().delete_new_student('sam@mycsu.edu'))
+
+    def test_update_student_record_and_marks_regrade(self):
+        self.assertTrue(self.student.update_student_record('alex@mycsu.edu', 'Marks', '95'))
+        rec = self.student._ll.find('alex@mycsu.edu')
+        self.assertEqual(rec['Grade'], 'A')
+        self.assertFalse(self.student.update_student_record('alex@mycsu.edu', 'Marks', 'oops'))
+        self.assertFalse(self.student.update_student_record('ghost@mycsu.edu', 'First_name', 'Ghost'))
+        self.login_as('student')
+        self.assertFalse(app.Student().update_student_record('alex@mycsu.edu', 'First_name', 'X'))
+
+    def test_check_my_grades_and_marks_access(self):
+        self.login_as('student')
+        with patch('builtins.print') as p:
+            app.Student().check_my_grades('sam@mycsu.edu')
+            self.assertTrue(any('Grades for sam@mycsu.edu' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        with patch('builtins.print') as p:
+            app.Student().check_my_marks('sam@mycsu.edu')
+            self.assertTrue(any('Marks for sam@mycsu.edu' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        with patch('builtins.print') as p:
+            app.Student().check_my_grades('alex@mycsu.edu')
+            self.assertTrue(any('Access denied' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        self.login_as('admin')
+        with patch('builtins.print') as p:
+            app.Student().check_my_marks('ghost@mycsu.edu')
+            self.assertTrue(any('Student not found' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+
+    def test_search_sort_stats_and_get_all(self):
+        rec = self.student.search_student('alex@mycsu.edu')
+        self.assertIsNotNone(rec)
+        self.assertIsNone(self.student.search_student('ghost@mycsu.edu'))
+        marks_asc = self.student.sort_records('marks', False)
+        self.assertEqual([r['Marks'] for r in marks_asc], ['74', '84', '91'])
+        marks_desc = self.student.sort_records('marks', True)
+        self.assertEqual([r['Marks'] for r in marks_desc], ['91', '84', '74'])
+        email_sort = self.student.sort_records('email', False)
+        self.assertEqual(email_sort[0]['Email_address'], 'alex@mycsu.edu')
+        name_sort = self.student.sort_records('name', False)
+        self.assertEqual(name_sort[0]['First_name'], 'Alex')
+        with patch('builtins.print') as p:
+            self.student.course_stats('DATA200')
+            self.assertTrue(any('Avg' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        with patch('builtins.print') as p:
+            self.student.course_stats('NOPE')
+            self.assertTrue(any('No records for NOPE' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        self.assertEqual(len(self.student.get_all()), 3)
+        self.login_as('student')
+        self.assertEqual(app.Student().sort_records(), [])
+
+
+class TestCourseFull(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as('admin')
+        self.course = app.Course()
+
+    def test_save_and_display_courses(self):
+        self.course._rows.append({'Course_id': 'MATH1', 'Course_name': 'Math', 'Credits': '3', 'Description': 'd'})
+        self.course._save()
+        self.assertTrue(any(r['Course_id'] == 'MATH1' for r in app.read_csv(app.COURSES_FILE)))
+        with patch('builtins.print') as p:
+            self.course.display_courses()
+            self.assertTrue(p.called)
+
+    def test_display_courses_professor_filter_student_and_empty(self):
+        self.login_as('professor')
+        with patch('builtins.print') as p:
+            app.Course().display_courses()
+            printed = ' '.join(' '.join(map(str, c.args)) for c in p.call_args_list)
+            self.assertIn('DATA200', printed)
+            self.assertNotIn('CS101', printed)
+        self.login_as('student')
+        with patch('builtins.print') as p:
+            app.Course().display_courses()
+            self.assertTrue(p.called)
+        seed_csv(app.COURSES_FILE, app.Course.FIELDS, [])
+        with patch('builtins.print') as p:
+            app.Course().display_courses()
+            self.assertTrue(any('No courses found' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+
+    def test_add_modify_delete_course_and_permissions(self):
+        self.assertTrue(self.course.add_new_course('BIO1', 'Biology', '3', 'Lab'))
+        self.assertFalse(self.course.add_new_course('BIO1', 'Biology', '3', 'Lab'))
+        self.assertFalse(self.course.add_new_course('', 'Biology', '3', 'Lab'))
+        self.assertTrue(self.course.modify_course('BIO1', 'Course_name', 'Biology I'))
+        self.assertFalse(self.course.modify_course('NOPE', 'Course_name', 'X'))
+        self.assertTrue(self.course.delete_new_course('CS101'))
+        prof_rows = app.read_csv(app.PROFESSORS_FILE)
+        self.assertEqual(next(r for r in prof_rows if r['Professor_id'] == 'masum@sjsu.edu')['Course_id'], '')
+        self.assertFalse(self.course.delete_new_course('NOPE'))
+        self.login_as('student')
+        c = app.Course()
+        self.assertFalse(c.add_new_course('X', 'X', '1', 'x'))
+        self.assertFalse(c.modify_course('DATA200', 'Course_name', 'X'))
+        self.assertFalse(c.delete_new_course('DATA200'))
+
+
+class TestProfessorFull(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as('admin')
+        self.prof = app.Professor()
+
+    def test_save_and_display_professors(self):
+        self.prof._rows.append({'Professor_id': 'new@sjsu.edu', 'Professor_name': 'New Prof', 'Rank': 'Adjunct', 'Course_id': 'DATA200'})
+        self.prof._save()
+        self.assertTrue(any(r['Professor_id'] == 'new@sjsu.edu' for r in app.read_csv(app.PROFESSORS_FILE)))
+        with patch('builtins.print') as p:
+            self.prof.professors_details()
+            self.assertTrue(p.called)
+
+    def test_professor_details_filter_and_empty(self):
+        self.login_as('professor')
+        with patch('builtins.print') as p:
+            app.Professor().professors_details()
+            printed = ' '.join(' '.join(map(str, c.args)) for c in p.call_args_list)
+            self.assertIn('saini@sjsu.edu', printed)
+            self.assertNotIn('masum@sjsu.edu', printed)
+        seed_csv(app.PROFESSORS_FILE, app.Professor.FIELDS, [])
+        with patch('builtins.print') as p:
+            app.Professor().professors_details()
+            self.assertTrue(any('No professors found' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+
+    def test_add_modify_delete_show_professor(self):
+        self.assertTrue(self.prof.add_new_professor('new@sjsu.edu', 'New Prof', 'Adjunct', 'CS101'))
+        self.assertFalse(self.prof.add_new_professor('new@sjsu.edu', 'New Prof', 'Adjunct', 'CS101'))
+        self.assertFalse(self.prof.add_new_professor('', 'New Prof', 'Adjunct', 'CS101'))
+        self.assertTrue(any(r['User_id'] == 'new@sjsu.edu' for r in app.read_csv(app.LOGIN_FILE)))
+        self.assertTrue(self.prof.modify_professor_details('new@sjsu.edu', 'Rank', 'Senior'))
+        self.assertFalse(self.prof.modify_professor_details('ghost@sjsu.edu', 'Rank', 'Senior'))
+        with patch('builtins.print') as p:
+            self.prof.show_course_details_by_professor('new@sjsu.edu')
+            self.assertTrue(any('teaches CS101' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        self.assertTrue(self.prof.delete_professore('new@sjsu.edu'))
+        self.assertFalse(any(r['User_id'] == 'new@sjsu.edu' for r in app.read_csv(app.LOGIN_FILE)))
+        self.assertFalse(self.prof.delete_professore('ghost@sjsu.edu'))
+        with patch('builtins.print') as p:
+            self.prof.show_course_details_by_professor('ghost@sjsu.edu')
+            self.assertTrue(any('not found' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        self.login_as('student')
+        pr = app.Professor()
+        self.assertFalse(pr.add_new_professor('x@y.com', 'X', 'Adj', 'DATA200'))
+        self.assertFalse(pr.modify_professor_details('saini@sjsu.edu', 'Rank', 'X'))
+        self.assertFalse(pr.delete_professore('saini@sjsu.edu'))
+
+
+class TestLoginAdminReportStartup(BaseTestCase):
+    def test_loginuser_find_login_logout_change_password_register(self):
+        lu = app.LoginUser()
+        self.assertIsNotNone(lu._find('ADMIN@MYCSU.EDU'))
+        self.assertIsNone(lu._find('ghost'))
+        self.assertEqual(lu.Login('admin@mycsu.edu', 'Admin123!'), 'admin')
+        self.assertIsNone(lu.Login('admin@mycsu.edu', 'bad'))
+        self.assertIsNone(lu.Login('', ''))
+        lu.Logout()
+        with patch('builtins.print') as p:
+            lu.Logout()
+            self.assertTrue(any('No user logged in' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        app.session.login('sam@mycsu.edu', 'student')
+        self.assertTrue(lu.Change_password('sam@mycsu.edu', 'Student123!', 'NewPass1!'))
+        self.assertFalse(lu.Change_password('sam@mycsu.edu', 'wrong', 'x'))
+        self.assertFalse(lu.Change_password('admin@mycsu.edu', 'Admin123!', 'Nope'))
+        self.assertEqual(lu.decrypt_password(lu.Encrypt_password('Hello1!')), 'Hello1!')
+        lu.Logout()
+        self.assertTrue(lu.register('newstudent@mycsu.edu', 'Abc123!', 'student'))
+        self.assertFalse(lu.register('newstudent@mycsu.edu', 'Abc123!', 'student'))
+        self.assertFalse(lu.register('bad@mycsu.edu', 'Abc123!', 'ta'))
+        self.assertFalse(lu.register('newprof@sjsu.edu', 'Prof123!', 'professor'))
+        app.session.login('admin@mycsu.edu', 'admin')
+        self.assertTrue(lu.register('newprof@sjsu.edu', 'Prof123!', 'professor'))
+        self.assertTrue(lu.register('otheradmin@mycsu.edu', 'Admin123!', 'admin'))
+
+    def test_admin_list_add_remove_reset(self):
+        self.login_as('admin')
+        admin = app.Admin()
+        with patch('builtins.print') as p:
+            admin.list_users()
+            self.assertTrue(p.called)
+        self.assertTrue(admin.add_user('fresh@mycsu.edu', 'Fresh123!', 'student'))
+        self.assertTrue(admin.reset_password('fresh@mycsu.edu', 'Reset123!'))
+        self.assertFalse(admin.reset_password('ghost@mycsu.edu', 'Reset123!'))
+        self.assertTrue(admin.remove_user('fresh@mycsu.edu'))
+        self.assertFalse(admin.remove_user('ghost@mycsu.edu'))
+        self.assertFalse(admin.remove_user('admin@mycsu.edu'))
+        self.login_as('student')
+        bad_admin = app.Admin()
+        self.assertFalse(bad_admin.remove_user('sam@mycsu.edu'))
+        self.assertFalse(bad_admin.reset_password('sam@mycsu.edu', 'X'))
+
+    def test_report_generator_by_course_professor_student(self):
+        student = app.Student()
+        report = app.ReportGenerator(student)
+        self.login_as('admin')
+        with patch('builtins.print') as p:
+            report.display_grade_report('course', 'DATA200')
+            self.assertTrue(any('Grade Report: Course DATA200' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        with patch('builtins.print') as p:
+            report.display_grade_report('professor', 'saini@sjsu.edu')
+            self.assertTrue(any('Grade Report: Professor Prof Saini' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        with patch('builtins.print') as p:
+            report.display_grade_report('student', 'sam@mycsu.edu')
+            self.assertTrue(any('Grade Report: Student sam@mycsu.edu' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        with patch('builtins.print') as p:
+            report.display_grade_report('course', 'NOPE')
+            self.assertTrue(any('No records found' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        with patch('builtins.print') as p:
+            report.display_grade_report('professor', 'ghost@sjsu.edu')
+            self.assertTrue(any('Professor not found' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        self.login_as('student')
+        with patch('builtins.print') as p:
+            report.display_grade_report('student', 'alex@mycsu.edu')
+            self.assertTrue(any('Access denied' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+        self.login_as('professor')
+        with patch('builtins.print') as p:
+            report.display_grade_report('course', 'CS101')
+            self.assertTrue(any('Access denied. Not your course' in ' '.join(map(str, c.args)) for c in p.call_args_list))
+
+    def test_startup_sync_creates_missing_accounts(self):
+        seed_csv(app.LOGIN_FILE, app.LoginUser.FIELDS, [
+            {'User_id': 'admin@mycsu.edu', 'Password': app.encrypt_password('Admin123!'), 'Role': 'admin'}
+        ])
+        app.startup_sync()
+        rows = app.read_csv(app.LOGIN_FILE)
+        ids = {r['User_id'] for r in rows}
+        self.assertIn('saini@sjsu.edu', ids)
+        self.assertIn('sam@mycsu.edu', ids)
+        before = len(rows)
+        app.startup_sync()
+        self.assertEqual(len(app.read_csv(app.LOGIN_FILE)), before)
+
+
+class TestMenus(BaseTestCase):
+    def test_student_menu_routes_all_options(self):
+        self.login_as('admin')
+        student = MagicMock()
+        with patch('builtins.input', side_effect=[
+            '1',
+            '2', 'new@mycsu.edu', 'New', 'User', 'DATA200', '91',
+            '3', 'new@mycsu.edu', 'DATA200',
+            '4', 'sam@mycsu.edu', 'First_name', 'Samuel',
+            '5', 'sam@mycsu.edu',
+            '6', '1', 'y',
+            '8', 'DATA200',
+            '0'
+        ]):
+            app.student_menu(student)
+        student.display_records.assert_called_once()
+        student.add_new_student.assert_called_once_with('new@mycsu.edu', 'New', 'User', 'DATA200', 'A', '91')
+        student.delete_new_student.assert_called_once_with('new@mycsu.edu', 'DATA200')
+        student.update_student_record.assert_called_once_with('sam@mycsu.edu', 'First_name', 'Samuel')
+        student.search_student.assert_called_once_with('sam@mycsu.edu')
+        student.sort_records.assert_called_once_with('marks', True)
+        student.course_stats.assert_called_once_with('DATA200')
+
+    def test_student_menu_student_view(self):
+        self.login_as('student')
+        student = MagicMock()
+        with patch('builtins.input', side_effect=['9', '0']):
+            app.student_menu(student)
+        student.check_my_grades.assert_called_once_with('sam@mycsu.edu')
+        student.check_my_marks.assert_called_once_with('sam@mycsu.edu')
+
+    def test_course_professor_report_user_menus(self):
+        self.login_as('admin')
+        course = MagicMock()
+        with patch('builtins.input', side_effect=['1', '2', 'C1', 'Course 1', '3', 'Desc', '3', 'C1', '4', 'C1', 'Course_name', 'Updated', '0']):
+            app.course_menu(course)
+        course.display_courses.assert_called_once()
+        course.add_new_course.assert_called_once_with('C1', 'Course 1', '3', 'Desc')
+        course.delete_new_course.assert_called_once_with('C1')
+        course.modify_course.assert_called_once_with('C1', 'Course_name', 'Updated')
+
+        professor = MagicMock()
+        with patch('builtins.input', side_effect=['1', '2', 'p@sjsu.edu', 'Prof', 'Adjunct', 'DATA200', '3', 'p@sjsu.edu', '4', 'p@sjsu.edu', 'Rank', 'Senior', '5', 'p@sjsu.edu', '0']):
+            app.professor_menu(professor)
+        professor.professors_details.assert_called_once()
+        professor.add_new_professor.assert_called_once_with('p@sjsu.edu', 'Prof', 'Adjunct', 'DATA200')
+        professor.delete_professore.assert_called_once_with('p@sjsu.edu')
+        professor.modify_professor_details.assert_called_once_with('p@sjsu.edu', 'Rank', 'Senior')
+        professor.show_course_details_by_professor.assert_called_once_with('p@sjsu.edu')
+
+        report = MagicMock()
+        with patch('builtins.input', side_effect=['1', 'DATA200', '2', 'saini@sjsu.edu', '3', 'sam@mycsu.edu', '0']):
+            app.report_menu(report)
+        self.assertEqual(report.display_grade_report.call_count, 3)
+
+        admin = MagicMock()
+        with patch('builtins.input', side_effect=['1', '2', 'u@x.com', 'Pwd1!', 'student', '3', 'u@x.com', '4', 'u@x.com', 'New1!', '0']):
+            app.user_menu(admin)
+        admin.list_users.assert_called_once()
+        admin.add_user.assert_called_once_with('u@x.com', 'Pwd1!', 'student')
+        admin.remove_user.assert_called_once_with('u@x.com')
+        admin.reset_password.assert_called_once_with('u@x.com', 'New1!')
+
+    def test_report_menu_student_role_uses_session_user(self):
+        self.login_as('student')
+        report = MagicMock()
+        with patch('builtins.input', side_effect=['3', '0']):
+            app.report_menu(report)
+        report.display_grade_report.assert_called_once_with('student', 'sam@mycsu.edu')
+
+    def test_main_menu_not_logged_in_paths_and_logged_in_paths(self):
+        fake_student = MagicMock()
+        fake_course = MagicMock()
+        fake_prof = MagicMock()
+        fake_lu = MagicMock()
+        fake_admin = MagicMock()
+        fake_report = MagicMock()
+
+        with patch('checkmygrade.startup_sync') as sync, \
+             patch('checkmygrade.Student', return_value=fake_student), \
+             patch('checkmygrade.Course', return_value=fake_course), \
+             patch('checkmygrade.Professor', return_value=fake_prof), \
+             patch('checkmygrade.LoginUser', return_value=fake_lu), \
+             patch('checkmygrade.Admin', return_value=fake_admin), \
+             patch('checkmygrade.ReportGenerator', return_value=fake_report), \
+             patch('builtins.input', side_effect=['2', 'self@mycsu.edu', 'Stud1!', '0']):
+            app.session.user_id = None
+            app.session.role = None
+            app.main_menu()
+        sync.assert_called_once()
+        fake_lu.register.assert_called_once_with('self@mycsu.edu', 'Stud1!', 'student')
+
+        with patch('checkmygrade.startup_sync'), \
+             patch('checkmygrade.Student', return_value=fake_student), \
+             patch('checkmygrade.Course', return_value=fake_course), \
+             patch('checkmygrade.Professor', return_value=fake_prof), \
+             patch('checkmygrade.LoginUser', return_value=fake_lu), \
+             patch('checkmygrade.Admin', return_value=fake_admin), \
+             patch('checkmygrade.ReportGenerator', return_value=fake_report), \
+             patch('builtins.input', side_effect=['1', 'admin@mycsu.edu', 'Admin123!', '0']):
+            app.session.user_id = None
+            app.session.role = None
+            app.main_menu()
+        fake_lu.Login.assert_called_with('admin@mycsu.edu', 'Admin123!')
+
+        with patch('checkmygrade.startup_sync'), \
+             patch('checkmygrade.Student', return_value=fake_student), \
+             patch('checkmygrade.Course', return_value=fake_course), \
+             patch('checkmygrade.Professor', return_value=fake_prof), \
+             patch('checkmygrade.LoginUser', return_value=fake_lu), \
+             patch('checkmygrade.Admin', return_value=fake_admin), \
+             patch('checkmygrade.ReportGenerator', return_value=fake_report), \
+             patch('checkmygrade.student_menu') as sm, \
+             patch('checkmygrade.course_menu') as cm, \
+             patch('checkmygrade.professor_menu') as pm, \
+             patch('checkmygrade.report_menu') as rm, \
+             patch('checkmygrade.user_menu') as um, \
+             patch('builtins.input', side_effect=['1', '2', '3', '4', '5', '6', 'old', 'new', '7', '0']):
+            app.session.login('admin@mycsu.edu', 'admin')
+            app.main_menu()
+        sm.assert_called_once_with(fake_student)
+        cm.assert_called_once_with(fake_course)
+        pm.assert_called_once_with(fake_prof)
+        rm.assert_called_once_with(fake_report)
+        um.assert_called_once_with(fake_admin)
+        fake_lu.Change_password.assert_called_once_with('admin@mycsu.edu', 'old', 'new')
+        fake_lu.Logout.assert_called_once()
+
+
+if __name__ == '__main__':
     unittest.main(verbosity=2)
